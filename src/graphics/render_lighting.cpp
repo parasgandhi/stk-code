@@ -208,16 +208,15 @@ void IrrDriver::renderLightsScatter(unsigned pointlightcount)
     glBlendFunc(GL_ONE, GL_ONE);
 
     FullScreenShader::FogShader::getInstance()->SetTextureUnits(irr_driver->getDepthStencilTexture());
-    DrawFullScreenEffect<FullScreenShader::FogShader>(1.f / (40.f * start), col);
+    DrawFullScreenEffect<FullScreenShader::FogShader>();
 
     glEnable(GL_DEPTH_TEST);
-    core::vector3df col2(1., 1., 1.);
 
     glUseProgram(LightShader::PointLightScatterShader::getInstance()->Program);
     glBindVertexArray(LightShader::PointLightScatterShader::getInstance()->vao);
 
     LightShader::PointLightScatterShader::getInstance()->SetTextureUnits(irr_driver->getDepthStencilTexture());
-    LightShader::PointLightScatterShader::getInstance()->setUniforms(1.f / (40.f * start), col2);
+    LightShader::PointLightScatterShader::getInstance()->setUniforms();
 
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, MIN2(pointlightcount, MAXLIGHT));
 

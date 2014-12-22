@@ -636,7 +636,7 @@ core::matrix4 getTighestFitOrthoProj(const core::matrix4 &transform, const std::
         return tmp_matrix;
     tmp_matrix.buildProjectionMatrixOrthoLH(left, right,
         down, up,
-        zmin - 100, zmax);
+        zmin - 500., zmax);
     return tmp_matrix;
 }
 

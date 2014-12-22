@@ -1,32 +1,32 @@
 uniform sampler2D source;
 uniform layout(r32f) restrict writeonly image2D dest;
 uniform vec2 pixel;
-uniform float weights[7];
+uniform float weights[17];
 
 // Gaussian separated blur with radius 6.
 
-layout (local_size_x = 8, local_size_y = 8) in;
+layout (local_size_x = 16, local_size_y = 4) in;
 
-shared float local_src[8 + 2 * 6][8];
+shared float local_src[16 + 2 * 16][4];
 
 void main()
 {
     int x = int(gl_LocalInvocationID.x), y = int(gl_LocalInvocationID.y);
     ivec2 iuv = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
-    vec2 uv_m = (iuv - ivec2(6, 0)) * pixel;
+    vec2 uv_m = (iuv - ivec2(16, 0)) * pixel;
     vec2 uv = iuv * pixel;
-    vec2 uv_p = (iuv + ivec2(6, 0)) * pixel;
+    vec2 uv_p = (iuv + ivec2(16, 0)) * pixel;
 
     local_src[x][y] = texture(source, uv_m).x;
-    local_src[x + 6][y] = texture(source, uv).x;
-    local_src[x + 12][y] = texture(source, uv_p).x;
+    local_src[x + 16][y] = texture(source, uv).x;
+    local_src[x + 32][y] = texture(source, uv_p).x;
 
     barrier();
 
-    float sum = local_src[x + 6][y] * weights[0];
-    for (int i = 1; i < 6; i++) {
-        sum += local_src[6 + x - i][y] * weights[i];
-        sum += local_src[6 + x + i][y] * weights[i];
+    float sum = local_src[x + 16][y] * weights[0];
+    for (int i = 1; i < 16; i++) {
+        sum += local_src[16 + x - i][y] * weights[i];
+        sum += local_src[16 + x + i][y] * weights[i];
     }
 
     imageStore(dest, iuv, vec4(sum));
